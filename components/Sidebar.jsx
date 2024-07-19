@@ -4,9 +4,14 @@ import RecentlyVisited from './RecentlyVisited';
 
 export default function Sidebar({ watchListCoins, recentlyVisitedCoins }) {
   return (
-    <aside className="h-full p-4 bg-gray-900 border-l border-gray-800 overflow-y-auto text-white">
-      <WatchList coins={watchListCoins} />
-      <RecentlyVisited coins={recentlyVisitedCoins} />
-    </aside>
+    <div className="relative flex-none h-full pt-5 bg-white  dark:bg-gray-800 dark:border-gray-700">
+      <div className="h-full px-5 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+        {/* Render WatchList component */}
+        <WatchList coins={watchListCoins} />
+
+        {/* Render RecentlyVisited component */}
+        <RecentlyVisited coins={recentlyVisitedCoins} />
+      </div>
+    </div>
   );
 }

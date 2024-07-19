@@ -1,56 +1,160 @@
-"use client"
+// components/CryptoList.jsx
+"use client";
 
 import React, { useState, useEffect } from 'react';
-import ReactPaginate from 'react-paginate';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
+import { fetchMarketData } from '../utils/CoinGeckoAPI'; // Adjust path as necessary
+import { addCoin } from '../store/slices/watchListSlice'; // Import addCoin action creator
+import { addCoinToRecentlyVisited } from '../store/slices/recentlyVisitedSlice'; // Adjust path as necessary
+import { HiPlus } from 'react-icons/hi'; // Importing Plus icon from react-icons
 
-const CryptoList = ({ data }) => {
-  const itemsPerPage = 20;
-  const [currentItems, setCurrentItems] = useState([]);
+const CryptoList = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [data, setData] = useState([]);
+  const [itemsPerPage] = useState(10); // Show 10 items per page
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
-  const [itemOffset, setItemOffset] = useState(0);
 
   useEffect(() => {
-    const endOffset = itemOffset + itemsPerPage;
-    setCurrentItems(data.slice(itemOffset, endOffset));
-    setPageCount(Math.ceil(data.length / itemsPerPage));
-  }, [itemOffset, itemsPerPage, data]);
+    const loadData = async () => {
+      try {
+        const marketData = await fetchMarketData(currentPage, itemsPerPage);
+        if (Array.isArray(marketData)) {
+          setData(marketData);
+          // Fetch the total count of items to calculate the number of pages
+          const totalItems = 250; // Example value, adjust accordingly
+          setPageCount(Math.ceil(totalItems / itemsPerPage));
+        } else {
+          console.error('Unexpected data structure:', marketData);
+          setData([]);
+        }
+      } catch (error) {
+        console.error('Failed to fetch market data', error);
+        setData([]); // Fallback to empty array on error
+      }
+    };
 
-  const handlePageClick = (event) => {
-    const newOffset = (event.selected * itemsPerPage) % data.length;
-    setItemOffset(newOffset);
+    loadData();
+  }, [currentPage]);
+
+  const handlePageClick = (page) => {
+    if (page >= 1 && page <= pageCount) {
+      setCurrentPage(page);
+    }
+  };
+
+  const handleRowClick = (crypto) => {
+    // Add the cryptocurrency to recently visited state
+    dispatch(addCoinToRecentlyVisited({
+      id: crypto.id,
+      name: crypto.name,
+      image: crypto.image,
+      current_price: crypto.current_price
+    }));
+
+    // Navigate to the product page
+    router.push(`/products/${crypto.id}`);
+  };
+
+  const handleAddToWatchList = (e, crypto) => {
+    e.stopPropagation(); // Prevent row click event
+    dispatch(addCoin({
+      id: crypto.id,
+      name: crypto.name,
+      image: crypto.image,
+      current_price: crypto.current_price,
+      market_cap: crypto.market_cap,
+      total_volume: crypto.total_volume,
+      high_24h: crypto.high_24h,
+      low_24h: crypto.low_24h,
+      price_change_percentage_24h: crypto.price_change_percentage_24h
+    }));
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {currentItems.map((crypto, index) => (
-          <Link key={index} href={`/products/${crypto.name.toLowerCase()}`}>
-            <div className="block p-4 border rounded-lg shadow-md bg-gray-800 text-white hover:bg-gray-700 hover:text-gray-200 transition-colors duration-300 cursor-pointer">
-              <h2 className="text-lg font-semibold">{crypto.name}</h2>
-              <p className="text-gray-400">Price: ${crypto.price}</p>
-            </div>
-          </Link>
-        ))}
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-6 py-3">Image</th>
+            <th scope="col" className="px-6 py-3">Name</th>
+            <th scope="col" className="px-6 py-3">Symbol</th>
+            <th scope="col" className="px-6 py-3">Price</th>
+            <th scope="col" className="px-6 py-3">Market Cap</th>
+            <th scope="col" className="px-6 py-3">Volume</th>
+            <th scope="col" className="px-6 py-3">High (24h)</th>
+            <th scope="col" className="px-6 py-3">Low (24h)</th>
+            <th scope="col" className="px-6 py-3">Change (24h)</th>
+            <th scope="col" className="px-6 py-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.length > 0 ? (
+            data.map((crypto) => (
+              <tr
+                key={crypto.id}
+                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                onClick={() => handleRowClick(crypto)}
+              >
+                <td className="px-6 py-4">
+                  <img src={crypto.image} alt={crypto.name} width={30} height={30} />
+                </td>
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  {crypto.name}
+                </td>
+                <td className="px-6 py-4">{crypto.symbol.toUpperCase()}</td>
+                <td className="px-6 py-4">${crypto.current_price.toLocaleString()}</td>
+                <td className="px-6 py-4">${crypto.market_cap.toLocaleString()}</td>
+                <td className="px-6 py-4">${crypto.total_volume.toLocaleString()}</td>
+                <td className="px-6 py-4">${crypto.high_24h.toLocaleString()}</td>
+                <td className="px-6 py-4">${crypto.low_24h.toLocaleString()}</td>
+                <td
+                  className="px-6 py-4"
+                  style={{
+                    color: crypto.price_change_percentage_24h < 0 ? 'red' : 'green',
+                  }}
+                >
+                  {crypto.price_change_percentage_24h.toFixed(2)}%
+                </td>
+                <td className="px-6 py-4">
+                  <button
+                    onClick={(e) => handleAddToWatchList(e, crypto)}
+                    className="text-blue-500 hover:text-blue-700"
+                  >
+                    <HiPlus size={20} />
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="10" className="text-center py-4">No data available</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
+      <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-800">
+        <button
+          onClick={() => handlePageClick(currentPage - 1)}
+          className="text-blue-600 dark:text-blue-500 hover:underline"
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+        <span className="text-blue-600 dark:text-blue-500">
+          Page {currentPage} of {pageCount}
+        </span>
+        <button
+          onClick={() => handlePageClick(currentPage + 1)}
+          className="text-blue-600 dark:text-blue-500 hover:underline"
+          disabled={currentPage === pageCount}
+        >
+          Next
+        </button>
       </div>
-      <ReactPaginate
-        breakLabel="..."
-        nextLabel="next >"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
-        pageCount={pageCount}
-        previousLabel="< previous"
-        containerClassName="flex justify-center mt-4"
-        pageClassName="mx-1"
-        pageLinkClassName="px-3 py-1 border rounded text-white bg-gray-700"
-        previousClassName="mx-1"
-        previousLinkClassName="px-3 py-1 border rounded text-white bg-gray-700"
-        nextClassName="mx-1"
-        nextLinkClassName="px-3 py-1 border rounded text-white bg-gray-700"
-        breakClassName="mx-1"
-        breakLinkClassName="px-3 py-1 border rounded text-white bg-gray-700"
-        activeClassName="bg-blue-500 text-white"
-      />
     </div>
   );
 };
