@@ -1,17 +1,16 @@
 import React from 'react';
-import WatchList from './WatchList';
 import RecentlyVisited from './RecentlyVisited';
+import WatchList from './WatchList';
+import CryptoNewsFeed from './CryptoNewsFeed'; // Import the CryptoNewsFeed component
 
-export default function Sidebar({ watchListCoins, recentlyVisitedCoins }) {
+const Sidebar = () => {
   return (
-    <div className="relative flex-none h-full pt-5 bg-white  dark:bg-gray-800 dark:border-gray-700">
-      <div className="h-full px-5 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
-        {/* Render WatchList component */}
-        <WatchList coins={watchListCoins} />
-
-        {/* Render RecentlyVisited component */}
-        <RecentlyVisited coins={recentlyVisitedCoins} />
-      </div>
+    <div className="flex flex-col h-full w-full p-4 overflow-y-auto">
+      <RecentlyVisited />
+      <WatchList />
+      {/* <CryptoNewsFeed id="Crypto" /> Pass an empty string or any placeholder */}
     </div>
   );
-}
+};
+
+export default Sidebar;

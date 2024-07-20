@@ -1,12 +1,15 @@
-"use client";
+"use client"
 
 import { useState } from 'react';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
+import RecentlyVisited from '@/components/RecentlyVisited';
+import WatchList from '@/components/WatchList';
 import { Provider } from 'react-redux';
 import { store } from '../store/index.js'; // Adjust the path as necessary
+import CryptoNewsFeed from '@/components/CryptoNewsFeed';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,17 +32,21 @@ export default function RootLayout({ children }) {
           <Navbar toggleSidebar={toggleSidebar} />
           <div className="flex flex-1 overflow-y-auto">
             <main className="flex-1 p-4">{children}</main>
-            {/* Sidebar Dropdown Menu */}
+            {/* Sidebar for mobile */}
             <div
-              className={`fixed z-50 bg-black opacity-0 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}
+              className={`fixed z-50 bg-black opacity-50 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}
               onClick={toggleSidebar}
             ></div>
             <div
-              className={`fixed z-40 w-1/3 h-full bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700 transform ${sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'} transition-all duration-300 md:relative md:translate-x-0`}
+              className={`fixed z-40 w-full h-full bg-white border-gray-200 dark:bg-gray-800 dark:border-gray-700 transform ${sidebarOpen ? 'translate-x-0 ease-out' : '-translate-x-full ease-in'} transition-all duration-300 md:hidden`}
             >
               <Sidebar />
             </div>
-            {/* End Sidebar Dropdown Menu */}
+            {/* Components for larger screens */}
+            <div className="hidden md:flex flex-col w-1/3 p-4 space-y-4">
+              <WatchList />
+              <RecentlyVisited />
+            </div>
           </div>
         </Provider>
       </body>

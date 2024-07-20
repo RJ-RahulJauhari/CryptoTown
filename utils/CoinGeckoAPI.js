@@ -64,5 +64,32 @@ const fetchCoinDataById = async(id) => {
 };
 
 
+const NEWS_API_URL = 'https://newsapi.org/v2/everything';
+const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY; // Store your API key in environment variables
 
-export { fetchMarketData, fetchHistoricalData, fetchCoinDataById };
+
+const fetchCryptoNews = async(query, page = 1, pageSize = 10, sortBy = 'publishedAt') => {
+    const url = `${NEWS_API_URL}?q=${encodeURIComponent(query)}&apiKey=${NEWS_API_KEY}&page=${page}&pageSize=${pageSize}&sortBy=${sortBy}`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json'
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching crypto news:', error);
+        return { articles: [], totalResults: 0 }; // Ensure `totalResults` is included
+    }
+};
+
+
+export { fetchCryptoNews, fetchMarketData, fetchHistoricalData, fetchCoinDataById };

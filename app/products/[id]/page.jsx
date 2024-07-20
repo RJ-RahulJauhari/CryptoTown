@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { fetchHistoricalData, fetchCoinDataById } from '../../../utils/CoinGeckoAPI'; // Adjust path as necessary
+import CryptoInfo from '@/components/CryptoInfo';
 
 const ProductPage = ({ params }) => {
   const router = useRouter();
@@ -130,7 +131,6 @@ const ProductPage = ({ params }) => {
       <div id="area-chart" className="mt-4">
         <ResponsiveContainer width="100%" height={500}>
           <AreaChart data={cryptoData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#555" />
             <XAxis 
               dataKey="date" 
               stroke="#FFF" 
@@ -230,6 +230,9 @@ const ProductPage = ({ params }) => {
             </div>
           )}
         </div>
+      </div>
+      <div>
+        <CryptoInfo id={id}></CryptoInfo>
       </div>
     </div>
   );

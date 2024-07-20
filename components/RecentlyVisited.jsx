@@ -55,16 +55,16 @@ const RecentlyVisited = () => {
                   {coin.name}
                 </TableCell>
                 <TableCell className="px-6 py-4">
-                  ${coin.currentPrice?.toLocaleString() || 'N/A'}
+                  ${coin.current_price || 'N/A'}
                 </TableCell>
                 <TableCell
                   className="px-6 py-4"
-                  style={{ color: coin.priceChange24h < 0 ? 'red' : 'green' }}
+                  style={{ color: coin.price_change_percentage_24h < 0 ? 'red' : 'green' }}
                 >
-                  {coin.priceChange24h?.toFixed(2) || 'N/A'}%
+                  {coin.price_change_percentage_24h || 'N/A'}%
                 </TableCell>
                 <TableCell className="px-6 py-4">
-                  ${coin.marketCap?.toLocaleString() || 'N/A'}
+                  ${coin.market_cap || 'N/A'}
                 </TableCell>
               </TableRow>
             ))

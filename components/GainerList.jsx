@@ -1,36 +1,42 @@
-// components/CryptoList.jsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { fetchMarketData } from '../utils/CoinGeckoAPI'; // Adjust path as necessary
 import { addCoin } from '../store/slices/watchListSlice'; // Import addCoin action creator
 import { addCoinToRecentlyVisited } from '../store/slices/recentlyVisitedSlice'; // Adjust path as necessary
 import { HiPlus } from 'react-icons/hi'; // Importing Plus icon from react-icons
 
-const CryptoList = () => {
+const GainersList = () => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const recentlyVisited = useSelector(state => state.recentlyVisited); // Get recently visited state
   const [data, setData] = useState([]);
-  const [itemsPerPage] = useState(10); // Show 10 items per page
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageCount, setPageCount] = useState(0);
+  const itemsPerPage = 20;
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const marketData = await fetchMarketData(currentPage, itemsPerPage);
-        if (Array.isArray(marketData)) {
-          setData(marketData);
-          // Fetch the total count of items to calculate the number of pages
-          const totalItems = 250; // Example value, adjust accordingly
-          setPageCount(Math.ceil(totalItems / itemsPerPage));
-        } else {
-          console.error('Unexpected data structure:', marketData);
-          setData([]);
-        }
+        // Fetch all market data
+        const allMarketData = [];
+        let currentPage = 1;
+        let marketData;
+
+        do {
+          marketData = await fetchMarketData(currentPage, 250); // Fetch 250 items per page
+          if (Array.isArray(marketData)) {
+            allMarketData.push(...marketData);
+            currentPage++;
+          } else {
+            console.error('Unexpected data structure:', marketData);
+            break;
+          }
+        } while (marketData.length === 250); // Continue fetching until less than 250 items are returned
+
+        // Filter gainers (positive change in the last 24 hours)
+        const gainers = allMarketData.filter(crypto => crypto.price_change_percentage_24h > 0);
+        setData(gainers);
       } catch (error) {
         console.error('Failed to fetch market data', error);
         setData([]); // Fallback to empty array on error
@@ -38,13 +44,7 @@ const CryptoList = () => {
     };
 
     loadData();
-  }, [currentPage]);
-
-  const handlePageClick = (page) => {
-    if (page >= 1 && page <= pageCount) {
-      setCurrentPage(page);
-    }
-  };
+  }, []);
 
   const handleRowClick = (crypto) => {
     // Add the cryptocurrency to recently visited state
@@ -78,9 +78,19 @@ const CryptoList = () => {
     }));
   };
 
+  const handlePageChange = (direction) => {
+    if (direction === 'next') {
+      setCurrentPage((prevPage) => prevPage + 1);
+    } else if (direction === 'prev') {
+      setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    }
+  };
+
+  const paginatedData = data.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <h1 className="text-3xl font-bold mt-8 mb-8">Cryptocurrency List</h1>
+      {/* <h1 className="text-3xl font-bold mt-8 mb-8">Top Gainers</h1> */}
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
@@ -97,8 +107,8 @@ const CryptoList = () => {
           </tr>
         </thead>
         <tbody>
-          {data.length > 0 ? (
-            data.map((crypto) => (
+          {paginatedData.length > 0 ? (
+            paginatedData.map((crypto) => (
               <tr
                 key={crypto.id}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
@@ -141,22 +151,19 @@ const CryptoList = () => {
           )}
         </tbody>
       </table>
-
-      <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-800">
+      <div className="flex justify-between mt-4">
         <button
-          onClick={() => handlePageClick(currentPage - 1)}
-          className="text-blue-600 dark:text-blue-500 hover:underline"
+          onClick={() => handlePageChange('prev')}
+          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded"
           disabled={currentPage === 1}
         >
           Previous
         </button>
-        <span className="text-blue-600 dark:text-blue-500">
-          Page {currentPage} of {pageCount}
-        </span>
+        <span>Page {currentPage}</span>
         <button
-          onClick={() => handlePageClick(currentPage + 1)}
-          className="text-blue-600 dark:text-blue-500 hover:underline"
-          disabled={currentPage === pageCount}
+          onClick={() => handlePageChange('next')}
+          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold rounded"
+          disabled={paginatedData.length < itemsPerPage}
         >
           Next
         </button>
@@ -165,4 +172,4 @@ const CryptoList = () => {
   );
 };
 
-export default CryptoList;
+export default GainersList;

@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { removeCoin } from '../store/slices/watchListSlice'; // Import the action creator
+import { FaTrashAlt } from 'react-icons/fa'; // Import the trash icon
 
 export default function WatchList() {
   const router = useRouter();
@@ -40,7 +41,7 @@ export default function WatchList() {
             <TableHead className="px-6 py-3">Last Price</TableHead>
             <TableHead className="px-6 py-3">Change (24h)</TableHead>
             <TableHead className="px-6 py-3">Market Cap</TableHead>
-            <TableHead className="px-6 py-3">Actions</TableHead>
+            <TableHead className="px-6 py-3">Remove</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -76,7 +77,7 @@ export default function WatchList() {
                   }}
                   className="text-red-500 hover:text-red-700"
                 >
-                  Remove
+                  <FaTrashAlt />
                 </button>
               </TableCell>
             </TableRow>

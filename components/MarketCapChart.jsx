@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { CartesianGrid, Area, AreaChart, ResponsiveContainer, Tooltip, Legend, XAxis, YAxis } from 'recharts';
 import { fetchHistoricalData } from '../utils/CoinGeckoAPI'; // Adjust path as necessary
 import { transformHistoricalData } from '../utils/DataManipulationFunctions'; // Adjust path as necessary
@@ -13,48 +13,49 @@ const GlobalMarketCapChart = ({ title }) => {
   const [error, setError] = useState(null);
   const [duration, setDuration] = useState('7'); // Default duration
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        // Fetch historical data for top 5 cryptocurrencies based on selected duration
-        const historicalPromises = topCryptos.map(id => fetchHistoricalData(id, 'usd', duration));
-        const historicalResponses = await Promise.all(historicalPromises);
+  const fetchData = useCallback(async () => {
+    try {
+      setLoading(true);
+      // Fetch historical data for top 5 cryptocurrencies based on selected duration
+      const historicalPromises = topCryptos.map(id => fetchHistoricalData(id, 'usd', duration));
+      const historicalResponses = await Promise.all(historicalPromises);
 
-        // Combine and transform historical data
-        const formattedHistoricalData = historicalResponses.map((response, index) => {
-          const transformedData = response ? transformHistoricalData(response) : [];
-          return {
-            id: topCryptos[index],
-            prices: transformedData,
-          };
+      // Combine and transform historical data
+      const formattedHistoricalData = historicalResponses.map((response, index) => {
+        const transformedData = response ? transformHistoricalData(response) : [];
+        return {
+          id: topCryptos[index],
+          prices: transformedData,
+        };
+      });
+
+      // Combine all data into a single array for the chart
+      const allDates = [...new Set(formattedHistoricalData.flatMap(crypto => crypto.prices.map(d => d.date)))];
+      const mergedData = allDates.map(date => {
+        const mergedEntry = { date };
+        formattedHistoricalData.forEach(crypto => {
+          const entry = crypto.prices.find(d => d.date === date);
+          if (entry) {
+            mergedEntry[crypto.id] = entry.price;
+          } else {
+            mergedEntry[crypto.id] = null;
+          }
         });
+        return mergedEntry;
+      });
 
-        // Combine all data into a single array for the chart
-        const allDates = [...new Set(formattedHistoricalData.flatMap(crypto => crypto.prices.map(d => d.date)))];
-        const mergedData = allDates.map(date => {
-          const mergedEntry = { date };
-          formattedHistoricalData.forEach(crypto => {
-            const entry = crypto.prices.find(d => d.date === date);
-            if (entry) {
-              mergedEntry[crypto.id] = entry.price;
-            } else {
-              mergedEntry[crypto.id] = null;
-            }
-          });
-          return mergedEntry;
-        });
-
-        setHistoricalData(mergedData);
-      } catch (error) {
-        setError('Failed to fetch data');
-        console.error('Error fetching data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getData();
+      setHistoricalData(mergedData);
+    } catch (error) {
+      setError('Failed to fetch data');
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
   }, [duration]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
@@ -100,7 +101,7 @@ const GlobalMarketCapChart = ({ title }) => {
   };
 
   return (
-    <div className="h-[500px] p-4 mb-20"> {/* Increased the height */}
+    <div className="h-[500px] w-full p-4 mb-20"> {/* Increased the height */}
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">{title}</h1>
         <select 
@@ -114,7 +115,7 @@ const GlobalMarketCapChart = ({ title }) => {
           <option value="90">Last 3 Months</option>
           <option value="180">Last 6 Months</option>
           <option value="365">Last Year</option>
-          <option value="730">Last 2 Years</option>
+          {/* <option value="730">Last 2 Years</option> */}
         </select>
       </div>
       <ResponsiveContainer width="100%" height="100%">
