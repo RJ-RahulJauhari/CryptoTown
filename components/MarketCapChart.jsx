@@ -57,11 +57,12 @@ const GlobalMarketCapChart = ({ title }) => {
     fetchData();
   }, [fetchData]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className="text-center text-sm md:text-base">Loading...</p>;
+  if (error) return <p className="text-center text-sm md:text-base">{error}</p>;
 
-  // Calculate X-axis ticks to show only 5 evenly spaced dates
-  const numberOfTicks = 5;
+  // Calculate X-axis ticks based on screen size
+  const isSmallScreen = window.innerWidth < 768;
+  const numberOfTicks = isSmallScreen ? 3 : 5;
   const dates = historicalData.map(d => d.date);
   const tickInterval = Math.max(1, Math.floor(dates.length / (numberOfTicks - 1)));
   const xAxisTicks = dates.filter((_, index) => index % tickInterval === 0);
@@ -87,7 +88,7 @@ const GlobalMarketCapChart = ({ title }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
-        <div className="p-2 border rounded shadow-lg bg-white text-black dark:bg-gray-800 dark:text-white">
+        <div className="p-2 border rounded shadow-lg bg-white text-black dark:bg-gray-800 dark:text-white text-sm md:text-base">
           <p className="label font-bold text-center mb-2">{formatDate(label)}</p>
           {payload.map((entry, index) => (
             <p key={`item-${index}`} className="text-black dark:text-white" style={{ color: getLineColor(index) }}>
@@ -101,13 +102,43 @@ const GlobalMarketCapChart = ({ title }) => {
   };
 
   return (
-    <div className="h-[500px] w-full p-4 mb-20"> {/* Increased the height */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">{title}</h1>
+    <div className="p-4 mb-5 w-full max-w-screen-sm md:max-w-screen-lg lg:max-w-screen-xl mx-auto">
+      <div className="flex flex-col items-center">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-center">{title}</h1>
+        <ResponsiveContainer width="100%" height={isSmallScreen ? 300 : 500}>
+          <AreaChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <XAxis 
+              dataKey="date" 
+              stroke="#FFF" 
+              ticks={xAxisTicks}
+              interval={0} // Ensure all tick labels are displayed
+              tickFormatter={formatToMonthYear} // Format date labels to month and year
+              label={{ value: 'Date', position: 'insideBottom', offset: -15, fontWeight: 'bold', fontSize: isSmallScreen ? 10 : 12 }} // Adjust font size for smaller screens
+              padding={{ left: 10, right: 10 }} // Add padding to X-axis labels
+            />
+            <YAxis 
+              stroke="#FFF" 
+              label={{ value: 'Price (USD)', angle: -90, position: 'insideLeft', offset: -10, fontWeight: 'bold', fontSize: isSmallScreen ? 10 : 12 }} // Adjust font size for smaller screens
+              padding={{ top: 10, bottom: 10 }} // Add padding to Y-axis labels
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Legend verticalAlign="top" align="right" height={36} />
+            {historicalData.length > 0 && Object.keys(historicalData[0]).filter(key => key !== 'date').map((cryptoId, index) => (
+              <Area 
+                key={cryptoId} 
+                type="monotone" 
+                dataKey={cryptoId}
+                stroke={getLineColor(index)}
+                fill={getLineColor(index)}
+                fillOpacity={0.3}
+              />
+            ))}
+          </AreaChart>
+        </ResponsiveContainer>
         <select 
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          className="p-2 border rounded bg-white text-black dark:bg-gray-700 dark:text-white dark:border-gray-600"
+          className={`mt-4 p-2 border rounded bg-white text-black dark:bg-gray-700 dark:text-white dark:border-gray-600 ${isSmallScreen ? 'w-full max-w-xs mx-auto' : ''} text-center`} // Center align the dropdown and add margin for small screens
         >
           <option value="7">Last 7 Days</option>
           <option value="14">Last 2 Weeks</option>
@@ -115,39 +146,8 @@ const GlobalMarketCapChart = ({ title }) => {
           <option value="90">Last 3 Months</option>
           <option value="180">Last 6 Months</option>
           <option value="365">Last Year</option>
-          {/* <option value="730">Last 2 Years</option> */}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-          <XAxis 
-            dataKey="date" 
-            stroke="#FFF" 
-            ticks={xAxisTicks}
-            interval={0} // Ensure all tick labels are displayed
-            tickFormatter={formatToMonthYear} // Format date labels to month and year
-            label={{ value: 'Date', position: 'insideBottom', offset: -15, fontWeight: 'bold' }} // Adjust offset
-            padding={{ left: 10, right: 10 }} // Add padding to X-axis labels
-          />
-          <YAxis 
-            stroke="#FFF" 
-            label={{ value: 'Price (USD)', angle: -90, position: 'insideLeft', offset: -10, fontWeight: 'bold' }} // Adjust offset
-            padding={{ top: 10, bottom: 10 }} // Add padding to Y-axis labels
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend verticalAlign="top" align="right" height={36} />
-          {historicalData.length > 0 && Object.keys(historicalData[0]).filter(key => key !== 'date').map((cryptoId, index) => (
-            <Area 
-              key={cryptoId} 
-              type="monotone" 
-              dataKey={cryptoId}
-              stroke={getLineColor(index)}
-              fill={getLineColor(index)}
-              fillOpacity={0.3}
-            />
-          ))}
-        </AreaChart>
-      </ResponsiveContainer>
     </div>
   );
 };

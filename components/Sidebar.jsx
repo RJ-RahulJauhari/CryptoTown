@@ -5,7 +5,7 @@ import CryptoNewsFeed from './CryptoNewsFeed'; // Import the CryptoNewsFeed comp
 
 const Sidebar = () => {
   return (
-    <div className="flex flex-col h-full w-full p-4 overflow-y-auto">
+    <div className="flex flex-col h-full p-4 overflow-y-auto">
       <RecentlyVisited />
       <WatchList />
       {/* <CryptoNewsFeed id="Crypto" /> Pass an empty string or any placeholder */}

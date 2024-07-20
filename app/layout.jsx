@@ -27,11 +27,11 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col h-screen overflow-x-hidden`}>
+      <body className={`${inter.className} flex flex-col h-screen w-screen overflow-x-hidden`}>
         <Provider store={store}>
           <Navbar toggleSidebar={toggleSidebar} />
-          <div className="flex flex-1 overflow-y-auto">
-            <main className="flex-1 p-4">{children}</main>
+          <div className="flex flex-1">
+            <main className="flex-1 p-4 w-full y- sm:w-screen">{children}</main>
             {/* Sidebar for mobile */}
             <div
               className={`fixed z-50 bg-black opacity-50 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}

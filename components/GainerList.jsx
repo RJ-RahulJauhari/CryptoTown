@@ -90,18 +90,17 @@ const GainersList = () => {
 
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      {/* <h1 className="text-3xl font-bold mt-8 mb-8">Top Gainers</h1> */}
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">Image</th>
             <th scope="col" className="px-6 py-3">Name</th>
-            <th scope="col" className="px-6 py-3">Symbol</th>
-            <th scope="col" className="px-6 py-3">Price</th>
-            <th scope="col" className="px-6 py-3">Market Cap</th>
-            <th scope="col" className="px-6 py-3">Volume</th>
-            <th scope="col" className="px-6 py-3">High (24h)</th>
-            <th scope="col" className="px-6 py-3">Low (24h)</th>
+            <th scope="col" className="hidden md:table-cell px-6 py-3">Symbol</th>
+            <th scope="col" className="hidden lg:table-cell px-6 py-3">Price</th>
+            <th scope="col" className="hidden lg:table-cell px-6 py-3">Market Cap</th>
+            <th scope="col" className="hidden xl:table-cell px-6 py-3">Volume</th>
+            <th scope="col" className="hidden xl:table-cell px-6 py-3">High (24h)</th>
+            <th scope="col" className="hidden xl:table-cell px-6 py-3">Low (24h)</th>
             <th scope="col" className="px-6 py-3">Change (24h)</th>
             <th scope="col" className="px-6 py-3">Actions</th>
           </tr>
@@ -120,12 +119,12 @@ const GainersList = () => {
                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                   {crypto.name}
                 </td>
-                <td className="px-6 py-4">{crypto.symbol.toUpperCase()}</td>
-                <td className="px-6 py-4">${crypto.current_price.toLocaleString()}</td>
-                <td className="px-6 py-4">${crypto.market_cap.toLocaleString()}</td>
-                <td className="px-6 py-4">${crypto.total_volume.toLocaleString()}</td>
-                <td className="px-6 py-4">${crypto.high_24h.toLocaleString()}</td>
-                <td className="px-6 py-4">${crypto.low_24h.toLocaleString()}</td>
+                <td className="hidden md:table-cell px-6 py-4">{crypto.symbol.toUpperCase()}</td>
+                <td className="hidden lg:table-cell px-6 py-4">${crypto.current_price.toLocaleString()}</td>
+                <td className="hidden lg:table-cell px-6 py-4">${crypto.market_cap.toLocaleString()}</td>
+                <td className="hidden xl:table-cell px-6 py-4">${crypto.total_volume.toLocaleString()}</td>
+                <td className="hidden xl:table-cell px-6 py-4">${crypto.high_24h.toLocaleString()}</td>
+                <td className="hidden xl:table-cell px-6 py-4">${crypto.low_24h.toLocaleString()}</td>
                 <td
                   className="px-6 py-4"
                   style={{
