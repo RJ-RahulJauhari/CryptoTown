@@ -93,7 +93,7 @@ const Navbar = ({ toggleSidebar }) => {
     <nav className={`bg-${theme === 'dark' ? 'gray-900' : 'white'} border-gray-200 dark:bg-gray-900`}>
       <div className="max-w-screen-xl mx-auto p-4">
         {/* For larger screens */}
-        <div className="hidden md:flex md:flex-row md:items-center md:justify-between">
+        <div className="hidden md:flex md:flex-row md:items-center md:justify-between lg:w-2/3 md:2/3">
           <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
             <Image src="/crypto_town_logo-removebg-preview.png" width={32} height={32} alt="Logo" />
             <span className={`self-center text-2xl font-semibold whitespace-nowrap ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Crypto Town</span>

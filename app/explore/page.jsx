@@ -11,7 +11,7 @@ import LosersList from '@/components/LosersList';
 
 const ExplorePage = () => {
   return (
-    <div className="container mx-auto p-4">
+    <div className="flex justify-start w-2/3 items-center">
       <Tabs defaultValue="cryptoList" className="w-full">
         <TabsList className="flex flex-wrap justify-center gap-2 mb-16"> {/* Adjusting for wrapping */}
           <TabsTrigger value="cryptoList" className="flex-1 text-center">Crypto List</TabsTrigger>

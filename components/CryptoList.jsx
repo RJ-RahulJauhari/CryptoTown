@@ -7,6 +7,16 @@ import { fetchMarketData } from '../utils/CoinGeckoAPI'; // Adjust path as neces
 import { addCoin } from '../store/slices/watchListSlice'; // Import addCoin action creator
 import { addCoinToRecentlyVisited } from '../store/slices/recentlyVisitedSlice'; // Adjust path as necessary
 import { HiPlus } from 'react-icons/hi'; // Importing Plus icon from react-icons
+import { formatNumber } from '../utils/DataManipulationFunctions'; // Import the formatting utility
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"; // Import Shadcn table components
 
 const CryptoList = () => {
   const router = useRouter();
@@ -78,70 +88,66 @@ const CryptoList = () => {
   };
 
   return (
-    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-      <h1 className="text-3xl font-bold mt-8 mb-8">Cryptocurrency List</h1>
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-              <th scope="col" className="px-3 py-2 sm:px-6 sm:py-3">Image</th>
-              <th scope="col" className="px-3 py-2 sm:px-6 sm:py-3">Name</th>
-              <th scope="col" className="hidden md:table-cell px-3 py-2 sm:px-6 sm:py-3">Symbol</th>
-              <th scope="col" className="hidden md:table-cell px-3 py-2 sm:px-6 sm:py-3">Price</th>
-              <th scope="col" className="hidden lg:table-cell px-3 py-2 sm:px-6 sm:py-3">Market Cap</th>
-              <th scope="col" className="hidden lg:table-cell px-3 py-2 sm:px-6 sm:py-3">Volume</th>
-              <th scope="col" className="hidden xl:table-cell px-3 py-2 sm:px-6 sm:py-3">High (24h)</th>
-              <th scope="col" className="hidden xl:table-cell px-3 py-2 sm:px-6 sm:py-3">Low (24h)</th>
-              <th scope="col" className="hidden xl:table-cell px-3 py-2 sm:px-6 sm:py-3">Change (24h)</th>
-              <th scope="col" className="px-3 py-2 sm:px-6 sm:py-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length > 0 ? (
-              data.map((crypto) => (
-                <tr
-                  key={crypto.id}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                  onClick={() => handleRowClick(crypto)}
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-4 bg-white dark:bg-gray-800">
+      <Table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <TableCaption>Current Market Data</TableCaption>
+        <TableHeader className="text-xs text-gray-900 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <TableRow>
+            <TableHead className="px-2 py-1 sm:px-3 sm:py-2">Image</TableHead>
+            <TableHead className="px-2 py-1 sm:px-3 sm:py-2">Name</TableHead>
+            <TableHead className="hidden md:table-cell px-2 py-1 sm:px-3 sm:py-2">Symbol</TableHead>
+            <TableHead className="hidden md:table-cell px-2 py-1 sm:px-3 sm:py-2">Price</TableHead>
+            <TableHead className="hidden lg:table-cell px-2 py-1 sm:px-3 sm:py-2">Market Cap</TableHead>
+            <TableHead className="hidden lg:table-cell px-2 py-1 sm:px-3 sm:py-2">Volume</TableHead>
+            <TableHead className="hidden xl:table-cell px-2 py-1 sm:px-3 sm:py-2">High (24h)</TableHead>
+            <TableHead className="hidden xl:table-cell px-2 py-1 sm:px-3 sm:py-2">Low (24h)</TableHead>
+            <TableHead className="hidden xl:table-cell px-2 py-1 sm:px-3 sm:py-2">Change (24h)</TableHead>
+            <TableHead className="px-2 py-1 sm:px-3 sm:py-2">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.length > 0 ? (
+            data.map((crypto) => (
+              <TableRow
+                key={crypto.id}
+                className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                onClick={() => handleRowClick(crypto)}
+              >
+                <TableCell className="px-2 py-2 sm:px-3 sm:py-3">
+                  <img src={crypto.image} alt={crypto.name} width={30} height={30} />
+                </TableCell>
+                <TableCell className="px-2 py-2 sm:px-3 sm:py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  {crypto.name}
+                </TableCell>
+                <TableCell className="hidden md:table-cell px-2 py-2 sm:px-3 sm:py-3">{crypto.symbol.toUpperCase()}</TableCell>
+                <TableCell className="hidden md:table-cell px-2 py-2 sm:px-3 sm:py-3">${formatNumber(crypto.current_price)}</TableCell>
+                <TableCell className="hidden lg:table-cell px-2 py-2 sm:px-3 sm:py-3">${formatNumber(crypto.market_cap)}</TableCell>
+                <TableCell className="hidden lg:table-cell px-2 py-2 sm:px-3 sm:py-3">${formatNumber(crypto.total_volume)}</TableCell>
+                <TableCell className="hidden xl:table-cell px-2 py-2 sm:px-3 sm:py-3">${formatNumber(crypto.high_24h)}</TableCell>
+                <TableCell className="hidden xl:table-cell px-2 py-2 sm:px-3 sm:py-3">${formatNumber(crypto.low_24h)}</TableCell>
+                <TableCell
+                  className="hidden xl:table-cell px-2 py-2 sm:px-3 sm:py-3"
+                  style={{ color: crypto.price_change_percentage_24h < 0 ? 'red' : 'green' }}
                 >
-                  <td className="px-3 py-4 sm:px-6 sm:py-4">
-                    <img src={crypto.image} alt={crypto.name} width={30} height={30} />
-                  </td>
-                  <td className="px-3 py-4 sm:px-6 sm:py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    {crypto.name}
-                  </td>
-                  <td className="hidden md:table-cell px-3 py-4 sm:px-6 sm:py-4">{crypto.symbol.toUpperCase()}</td>
-                  <td className="hidden md:table-cell px-3 py-4 sm:px-6 sm:py-4">${crypto.current_price.toLocaleString()}</td>
-                  <td className="hidden lg:table-cell px-3 py-4 sm:px-6 sm:py-4">${crypto.market_cap.toLocaleString()}</td>
-                  <td className="hidden lg:table-cell px-3 py-4 sm:px-6 sm:py-4">${crypto.total_volume.toLocaleString()}</td>
-                  <td className="hidden xl:table-cell px-3 py-4 sm:px-6 sm:py-4">${crypto.high_24h.toLocaleString()}</td>
-                  <td className="hidden xl:table-cell px-3 py-4 sm:px-6 sm:py-4">${crypto.low_24h.toLocaleString()}</td>
-                  <td
-                    className="hidden xl:table-cell px-3 py-4 sm:px-6 sm:py-4"
-                    style={{
-                      color: crypto.price_change_percentage_24h < 0 ? 'red' : 'green',
-                    }}
+                  {crypto.price_change_percentage_24h.toFixed(2)}%
+                </TableCell>
+                <TableCell className="px-2 py-2 sm:px-3 sm:py-3">
+                  <button
+                    onClick={(e) => handleAddToWatchList(e, crypto)}
+                    className="text-blue-500 hover:text-blue-700"
                   >
-                    {crypto.price_change_percentage_24h.toFixed(2)}%
-                  </td>
-                  <td className="px-3 py-4 sm:px-6 sm:py-4">
-                    <button
-                      onClick={(e) => handleAddToWatchList(e, crypto)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      <HiPlus size={20} />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="10" className="text-center py-4">No data available</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                    <HiPlus size={20} />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan="10" className="text-center py-4">No data available</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
 
       <div className="flex justify-between items-center p-4 bg-white dark:bg-gray-800">
         <button

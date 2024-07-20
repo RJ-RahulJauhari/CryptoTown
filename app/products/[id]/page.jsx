@@ -72,7 +72,7 @@ const ProductPage = ({ params }) => {
   }, [id, selectedDuration]);
 
   if (!cryptoData || !coinDetails) {
-    return <p className="text-center text-white">Loading...</p>;
+    return <p className="text-center w-2/3 h-full flex justify-center items-center text-white">Loading...</p>;
   }
 
   const toggleDropdown = () => {
@@ -115,7 +115,7 @@ const ProductPage = ({ params }) => {
   };
 
   return (
-    <div className="rounded-lg shadow p-4 md:p-6 text-black bg-white dark:bg-gray-900 dark:text-white">
+    <div className="rounded-lg shadow p-4 md:p-6 text-black bg-white dark:bg-gray-900 dark:text-white lg:w-2/3 md:w-2/3">
       <div className="flex justify-between mb-4">
         <div>
           <h5 className="text-3xl font-bold text-black dark:text-white">{id.toUpperCase()}</h5>
@@ -133,7 +133,7 @@ const ProductPage = ({ params }) => {
           <AreaChart data={cryptoData} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
             <XAxis 
               dataKey="date" 
-              stroke="#FFF" 
+              stroke="#808080" 
               tickFormatter={formatXAxisDate} 
               tick={{ fontSize: 12 }}
               label={{ value: 'Date', position: 'insideBottom', offset: -5, fontSize: 14, fontWeight: 'bold' }}
@@ -141,7 +141,7 @@ const ProductPage = ({ params }) => {
               padding={{ left: 10, right: 10 }}
             />
             <YAxis 
-              stroke="#FFF" 
+              stroke="#808080" 
               label={{ value: 'Price (USD)', angle: -90, position: 'insideLeft', offset: -10, fontSize: 14, fontWeight: 'bold' }}
               padding={{ top: 10, bottom: 10 }}
             />

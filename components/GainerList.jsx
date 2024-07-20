@@ -8,6 +8,20 @@ import { addCoin } from '../store/slices/watchListSlice'; // Import addCoin acti
 import { addCoinToRecentlyVisited } from '../store/slices/recentlyVisitedSlice'; // Adjust path as necessary
 import { HiPlus } from 'react-icons/hi'; // Importing Plus icon from react-icons
 
+const formatNumber = (number) => {
+    if (number >= 1e12) {
+        return (number / 1e12).toFixed(2) + 'T'; // Trillions
+    } else if (number >= 1e9) {
+        return (number / 1e9).toFixed(2) + 'B'; // Billions
+    } else if (number >= 1e6) {
+        return (number / 1e6).toFixed(2) + 'M'; // Millions
+    } else if (number >= 1e3) {
+        return (number / 1e3).toFixed(2) + 'K'; // Thousands
+    } else {
+        return number.toFixed(2); // Less than 1,000
+    }
+};
+
 const GainersList = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -120,11 +134,11 @@ const GainersList = () => {
                   {crypto.name}
                 </td>
                 <td className="hidden md:table-cell px-6 py-4">{crypto.symbol.toUpperCase()}</td>
-                <td className="hidden lg:table-cell px-6 py-4">${crypto.current_price.toLocaleString()}</td>
-                <td className="hidden lg:table-cell px-6 py-4">${crypto.market_cap.toLocaleString()}</td>
-                <td className="hidden xl:table-cell px-6 py-4">${crypto.total_volume.toLocaleString()}</td>
-                <td className="hidden xl:table-cell px-6 py-4">${crypto.high_24h.toLocaleString()}</td>
-                <td className="hidden xl:table-cell px-6 py-4">${crypto.low_24h.toLocaleString()}</td>
+                <td className="hidden lg:table-cell px-6 py-4">${formatNumber(crypto.current_price)}</td>
+                <td className="hidden lg:table-cell px-6 py-4">${formatNumber(crypto.market_cap)}</td>
+                <td className="hidden xl:table-cell px-6 py-4">${formatNumber(crypto.total_volume)}</td>
+                <td className="hidden xl:table-cell px-6 py-4">${formatNumber(crypto.high_24h)}</td>
+                <td className="hidden xl:table-cell px-6 py-4">${formatNumber(crypto.low_24h)}</td>
                 <td
                   className="px-6 py-4"
                   style={{

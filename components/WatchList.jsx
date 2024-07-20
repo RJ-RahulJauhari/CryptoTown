@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { removeCoin } from '../store/slices/watchListSlice'; // Import the action creator
 import { FaTrashAlt } from 'react-icons/fa'; // Import the trash icon
+import { formatNumber } from '../utils/DataManipulationFunctions'; // Import the formatting function
 
 export default function WatchList() {
   const router = useRouter();
@@ -27,48 +28,45 @@ export default function WatchList() {
   };
 
   return (
-    <div className="mb-6 relative overflow-x-auto">
-      <h2 className="text-lg font-semibold mb-2 border-b border-gray-600 pb-2 text-black dark:text-white">
-        Watch List
-      </h2>
+    <div className="relative overflow-x-auto shadow-md sm:rounded-lg p-4 bg-white dark:bg-gray-800">
       <Table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <TableCaption>A list of your watchlist coins.</TableCaption>
         <TableHeader className="text-xs text-gray-900 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <TableRow>
-            <TableHead className="px-4 py-3 md:px-6 md:py-3">Image</TableHead>
-            <TableHead className="px-4 py-3 md:px-6 md:py-3">Name</TableHead>
-            <TableHead className="hidden sm:table-cell px-4 py-3 md:px-6 md:py-3">Last Price</TableHead>
-            <TableHead className="hidden md:table-cell px-4 py-3 md:px-6 md:py-3">Change (24h)</TableHead>
-            <TableHead className="hidden lg:table-cell px-4 py-3 md:px-6 md:py-3">Market Cap</TableHead>
-            <TableHead className="px-4 py-3 md:px-6 md:py-3">Remove</TableHead> {/* Adjusted to be visible on all screens */}
+            <TableHead className="px-2 py-1 sm:px-3 sm:py-2">Image</TableHead>
+            <TableHead className="px-2 py-1 sm:px-3 sm:py-2">Name</TableHead>
+            <TableHead className="hidden sm:table-cell px-2 py-1 sm:px-3 sm:py-2">Last Price</TableHead>
+            <TableHead className="hidden md:table-cell px-2 py-1 sm:px-3 sm:py-2">Change (24h)</TableHead>
+            <TableHead className="hidden lg:table-cell px-2 py-1 sm:px-3 sm:py-2">Market Cap</TableHead>
+            <TableHead className="px-2 py-1 sm:px-3 sm:py-2">Remove</TableHead> {/* Adjusted to be visible on all screens */}
           </TableRow>
         </TableHeader>
         <TableBody>
           {coins.map((coin) => (
             <TableRow
-              key={coin.id} // Changed from index to coin.id
+              key={coin.id}
               className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-              onClick={() => handleRowClick(coin.id)} // Navigate using coin.id
+              onClick={() => handleRowClick(coin.id)}
             >
-              <TableCell className="px-4 py-4 md:px-6 md:py-4">
+              <TableCell className="px-2 py-2">
                 <img src={coin.image} alt={coin.name} width={30} height={30} />
               </TableCell>
-              <TableCell className="px-4 py-4 md:px-6 md:py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <TableCell className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                 {coin.name}
               </TableCell>
-              <TableCell className="hidden sm:table-cell px-4 py-4 md:px-6 md:py-4">
-                ${coin.current_price}
+              <TableCell className="hidden sm:table-cell px-2 py-2">
+                {formatNumber(coin.current_price)}
               </TableCell>
               <TableCell
-                className="hidden md:table-cell px-4 py-4 md:px-6 md:py-4"
+                className="hidden md:table-cell px-2 py-2"
                 style={{ color: coin.price_change_percentage_24h < 0 ? 'red' : 'green' }}
               >
-                {coin.price_change_percentage_24h}%
+                {formatNumber(coin.price_change_percentage_24h)}%
               </TableCell>
-              <TableCell className="hidden lg:table-cell px-4 py-4 md:px-6 md:py-4">
-                ${coin.market_cap}
+              <TableCell className="hidden lg:table-cell px-2 py-2">
+                {formatNumber(coin.market_cap)}
               </TableCell>
-              <TableCell className="px-4 py-4 md:px-6 md:py-4"> {/* Adjusted to be visible on all screens */}
+              <TableCell className="px-2 py-2">
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
