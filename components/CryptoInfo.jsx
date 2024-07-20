@@ -15,11 +15,19 @@ const CryptoInfo = ({ id }) => {
           const currentPrice = coinData.market_data.current_price.usd;
           const marketCap = coinData.market_data.market_cap.usd;
           const volume24h = coinData.market_data.total_volume.usd;
+          const description = coinData.description.en;
+          const totalSupply = coinData.market_data.total_supply;
+          const circulatingSupply = coinData.market_data.circulating_supply;
+          const maxSupply = coinData.market_data.max_supply;
 
           setCoinDetails({
             currentPrice,
             marketCap,
-            volume24h
+            volume24h,
+            description,
+            totalSupply,
+            circulatingSupply,
+            maxSupply
           });
         }
       } catch (error) {
@@ -52,7 +60,12 @@ const CryptoInfo = ({ id }) => {
   }
 
   const formatCurrency = (value) => {
-    return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value);
   };
 
   return (
@@ -72,6 +85,25 @@ const CryptoInfo = ({ id }) => {
         <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <h6 className="text-lg font-bold">24h Trading Volume</h6>
           <p className="text-xl">{formatCurrency(coinDetails.volume24h)}</p>
+        </div>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <h6 className="text-lg font-bold">Circulating Supply</h6>
+          <p className="text-xl">{coinDetails.circulatingSupply}</p>
+        </div>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <h6 className="text-lg font-bold">Total Supply</h6>
+          <p className="text-xl">{coinDetails.totalSupply}</p>
+        </div>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <h6 className="text-lg font-bold">Max Supply</h6>
+          <p className="text-xl">{coinDetails.maxSupply}</p>
+        </div>
+        <div className="p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+          <h6 className="text-lg font-bold">Description</h6>
+          <p
+            className="text-lg description"
+            dangerouslySetInnerHTML={{ __html: coinDetails.description }}
+          ></p>
         </div>
       </div>
       <CryptoNewsFeed id={id} />

@@ -82,3 +82,16 @@
         @apply bg-background text-foreground;
     }
 }
+
+
+/* Style for the description links */
+
+.description a {
+    color: #1e90ff;
+    /* Dodger Blue */
+    text-decoration: none;
+}
+
+.description a:hover {
+    text-decoration: underline;
+}
