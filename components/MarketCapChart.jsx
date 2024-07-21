@@ -101,6 +101,9 @@ const GlobalMarketCapChart = ({ title }) => {
     return null;
   };
 
+  // Set axis tick color to grey
+  const axisTickColor = '#808080';
+
   return (
     <div className="p-4 mb-5 w-full max-w-screen-sm md:max-w-screen-lg lg:max-w-screen-xl mx-auto">
       <div className="flex flex-col items-center">
@@ -109,17 +112,19 @@ const GlobalMarketCapChart = ({ title }) => {
           <AreaChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
             <XAxis 
               dataKey="date" 
-              stroke="#FFF" 
+              stroke={axisTickColor} 
               ticks={xAxisTicks}
               interval={0} // Ensure all tick labels are displayed
               tickFormatter={formatToMonthYear} // Format date labels to month and year
               label={{ value: 'Date', position: 'insideBottom', offset: -15, fontWeight: 'bold', fontSize: isSmallScreen ? 10 : 12 }} // Adjust font size for smaller screens
               padding={{ left: 10, right: 10 }} // Add padding to X-axis labels
+              tick={{ fill: axisTickColor }} // Set the tick color
             />
             <YAxis 
-              stroke="#FFF" 
+              stroke={axisTickColor} 
               label={{ value: 'Price (USD)', angle: -90, position: 'insideLeft', offset: -10, fontWeight: 'bold', fontSize: isSmallScreen ? 10 : 12 }} // Adjust font size for smaller screens
               padding={{ top: 10, bottom: 10 }} // Add padding to Y-axis labels
+              tick={{ fill: axisTickColor }} // Set the tick color
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="top" align="right" height={36} />
@@ -153,7 +158,7 @@ const GlobalMarketCapChart = ({ title }) => {
 };
 
 const getLineColor = (index) => {
-  const colors = ['#1A56DB', '#FF6F61', '#6B8E23', '#FFD700', '#8A2BE2']; // Add more colors as needed
+  const colors = ['#00FF00', '#0000FF', '#6B8E23', '#FFD700', '#8A2BE2']; // Add more colors as needed
   return colors[index % colors.length];
 };
 

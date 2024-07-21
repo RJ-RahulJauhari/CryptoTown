@@ -65,7 +65,7 @@ const fetchCoinDataById = async(id) => {
 
 
 const NEWS_API_URL = 'https://newsapi.org/v2/everything';
-const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY; // Store your API key in environment variables
+const NEWS_API_KEY = process.env.NEXT_PUBLIC_NEWS_API_KEY;
 
 
 const fetchCryptoNews = async(query, page = 1, pageSize = 10, sortBy = 'publishedAt') => {
