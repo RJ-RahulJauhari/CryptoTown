@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { CartesianGrid, Area, AreaChart, ResponsiveContainer, Tooltip, Legend, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, Legend, XAxis, YAxis } from 'recharts';
 import { fetchHistoricalData } from '../utils/CoinGeckoAPI'; // Adjust path as necessary
 import { transformHistoricalData } from '../utils/DataManipulationFunctions'; // Adjust path as necessary
 
@@ -109,7 +109,7 @@ const GlobalMarketCapChart = ({ title }) => {
       <div className="flex flex-col items-center">
         <h1 className="text-2xl md:text-3xl font-bold mb-4 text-center">{title}</h1>
         <ResponsiveContainer width="100%" height={isSmallScreen ? 300 : 500}>
-          <AreaChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+          <LineChart data={historicalData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
             <XAxis 
               dataKey="date" 
               stroke={axisTickColor} 
@@ -129,16 +129,16 @@ const GlobalMarketCapChart = ({ title }) => {
             <Tooltip content={<CustomTooltip />} />
             <Legend verticalAlign="top" align="right" height={36} />
             {historicalData.length > 0 && Object.keys(historicalData[0]).filter(key => key !== 'date').map((cryptoId, index) => (
-              <Area 
+              <Line 
                 key={cryptoId} 
                 type="monotone" 
                 dataKey={cryptoId}
                 stroke={getLineColor(index)}
-                fill={getLineColor(index)}
-                fillOpacity={0.3}
+                strokeWidth={2} // Set stroke width for lines
+                dot={false} // Hide dots on lines
               />
             ))}
-          </AreaChart>
+          </LineChart>
         </ResponsiveContainer>
         <select 
           value={duration}
