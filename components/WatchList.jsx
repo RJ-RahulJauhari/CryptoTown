@@ -14,13 +14,14 @@ import { removeCoin } from '../store/slices/watchListSlice'; // Import the actio
 import { FaTrashAlt } from 'react-icons/fa'; // Import the trash icon
 import { formatNumber } from '../utils/DataManipulationFunctions'; // Import the formatting function
 
-export default function WatchList() {
+export default function WatchList({ toggleSidebar }) {
   const router = useRouter();
   const dispatch = useDispatch();
   const coins = useSelector(state => state.watchList);
 
   const handleRowClick = (id) => {
     router.push(`/products/${id}`);
+    toggleSidebar(); // Close the sidebar on row click
   };
 
   const handleRemove = (id) => {

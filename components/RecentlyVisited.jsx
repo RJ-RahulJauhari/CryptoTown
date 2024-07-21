@@ -12,12 +12,13 @@ import {
 } from "@/components/ui/table";
 import { formatNumber } from '../utils/DataManipulationFunctions'; // Import the formatting function
 
-const RecentlyVisited = () => {
+const RecentlyVisited = ({ toggleSidebar }) => {
   const router = useRouter();
   const coins = useSelector(state => state.recentlyVisited?.visitedCoins || []);
 
   const handleRowClick = (id) => {
     router.push(`/products/${id}`);
+    toggleSidebar(); // Close the sidebar on row click
   };
 
   return (
