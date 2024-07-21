@@ -23,7 +23,7 @@ const CryptoList = () => {
   const dispatch = useDispatch();
   const recentlyVisited = useSelector(state => state.recentlyVisited); // Get recently visited state
   const [data, setData] = useState([]);
-  const [itemsPerPage] = useState(10); // Show 10 items per page
+  const [itemsPerPage] = useState(20); // Show 20 items per page
   const [currentPage, setCurrentPage] = useState(1);
   const [pageCount, setPageCount] = useState(0);
 
