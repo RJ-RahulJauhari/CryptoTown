@@ -10,7 +10,7 @@ const Navbar = ({ toggleSidebar }) => {
   const router = useRouter();
   const [searchInput, setSearchInput] = useState('');
   const [suggestions, setSuggestions] = useState([]);
-  const [theme, setTheme] = useState('light'); // Default to light theme
+  const [theme, setTheme] = useState('dark'); // Default to light theme
   const [allCryptos, setAllCryptos] = useState([]);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
