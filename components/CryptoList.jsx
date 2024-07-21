@@ -17,6 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Import Shadcn table components
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CryptoList = () => {
   const router = useRouter();
@@ -85,6 +87,9 @@ const CryptoList = () => {
       low_24h: crypto.low_24h,
       price_change_percentage_24h: crypto.price_change_percentage_24h
     }));
+
+    // Show Toast notification
+    toast.success(`${crypto.name} added to your watch list!`);
   };
 
   return (
@@ -168,6 +173,8 @@ const CryptoList = () => {
           Next
         </button>
       </div>
+
+      <ToastContainer />
     </div>
   );
 };

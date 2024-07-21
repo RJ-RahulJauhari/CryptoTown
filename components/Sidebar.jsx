@@ -9,7 +9,6 @@ const Sidebar = () => {
       
       <WatchList />
       <RecentlyVisited />
-      {/* <CryptoNewsFeed id="Crypto" /> Pass an empty string or any placeholder */}
     </div>
   );
 };
