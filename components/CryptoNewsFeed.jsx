@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {newsData} from '../utils/newAPI'; // Adjust path as necessary
+import { newsData } from '../utils/newAPI'; // Adjust path as necessary
 import NewsCard from './NewsCard'; // Adjust path as necessary
 
 const CryptoNewsFeed = ({ id }) => {
@@ -13,8 +13,10 @@ const CryptoNewsFeed = ({ id }) => {
     const fetchNews = async () => {
       setLoading(true);
       try {
-        // Directly use newsData from the JSON file
-        const filteredNews = newsData.articles.filter(article => article.title.toLowerCase().includes(id.toLowerCase()));
+        const searchId = id || 'crypto'; // Use 'crypto' as the default ID
+        const filteredNews = newsData.articles.filter(article =>
+          article.title.toLowerCase().includes(searchId.toLowerCase())
+        );
         setNewsArticles(filteredNews);
         setTotalResults(filteredNews.length); // Set total results from the filtered news data
       } catch (error) {
@@ -51,7 +53,7 @@ const CryptoNewsFeed = ({ id }) => {
 
   return (
     <div>
-      <h5 className="text-2xl font-bold mb-4">Latest News for {id}</h5>
+      <h5 className="text-2xl font-bold mb-4">Latest News for {id || 'Crypto'}</h5>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {paginatedNewsArticles.map((article, index) => (
           <NewsCard key={index} article={article} />
